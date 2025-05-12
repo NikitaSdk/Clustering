@@ -1,0 +1,3 @@
+C:/Users/user/CLionProjects/CodeForTest3WithC/build/CMakeFiles/CodeForTest3WithC.dir
+C:/Users/user/CLionProjects/CodeForTest3WithC/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/user/CLionProjects/CodeForTest3WithC/build/CMakeFiles/ZERO_CHECK.dir

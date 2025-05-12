@@ -1,0 +1,20 @@
+# ninja log v6
+30	63	7687202006417618	CMakeFiles/CodeForTest3WithC.dir/Customer.cpp.obj.ddi	27d6aeb18de0f16e
+25	189	7687659295104602	build.ninja	675a0e85f6f3f101
+49	761	7687654932305716	CMakeFiles/CodeForTest3WithC.dir/main.cpp.obj.ddi	864e3b88cadb4d11
+762	808	7687654939430329	CMakeFiles/CodeForTest3WithC.dir/CXX.dd	28bfc5485984df1
+762	808	7687654939430329	C:/Users/user/CLionProjects/CodeForTest3WithC/cmake-build-debug/CMakeFiles/CodeForTest3WithC.dir/CXXModules.json	28bfc5485984df1
+559	584	7687202011707606	CMakeFiles/CodeForTest3WithC.dir/Customer.cpp.obj.modmap	e18f909e818e2bb1
+817	7559	7687654939982255	CMakeFiles/CodeForTest3WithC.dir/main.cpp.obj	674be19cf13ebe33
+762	808	7687654939430329	CMakeFiles/CodeForTest3WithC.dir/main.cpp.obj.modmap	28bfc5485984df1
+7559	7703	7687655007410744	CodeForTest3WithC.exe	c7e43b5095965c0a
+33	557	7687202006447623	CMakeFiles/CodeForTest3WithC.dir/ClusterAnalyzer.cpp.obj.ddi	3aa6d47471ed4148
+559	584	7687202011707606	CMakeFiles/CodeForTest3WithC.dir/ClusterAnalyzer.cpp.obj.modmap	e18f909e818e2bb1
+585	623	7687202011957627	CMakeFiles/CodeForTest3WithC.dir/Customer.cpp.obj	dc05b1b5951c29f9
+587	6940	7687202011987606	CMakeFiles/CodeForTest3WithC.dir/ClusterAnalyzer.cpp.obj	f165c7b3edd200ea
+25	475	7687659718717170	CMakeFiles/CodeForTest3WithC.dir/main.cpp.obj.ddi	864e3b88cadb4d11
+476	496	7687659723225949	CMakeFiles/CodeForTest3WithC.dir/CXX.dd	28bfc5485984df1
+476	496	7687659723225949	C:/Users/user/CLionProjects/CodeForTest3WithC/cmake-build-debug/CMakeFiles/CodeForTest3WithC.dir/CXXModules.json	28bfc5485984df1
+476	496	7687659723225949	CMakeFiles/CodeForTest3WithC.dir/main.cpp.obj.modmap	28bfc5485984df1
+497	7057	7687659723435960	CMakeFiles/CodeForTest3WithC.dir/main.cpp.obj	674be19cf13ebe33
+7058	7156	7687659789046984	CodeForTest3WithC.exe	c7e43b5095965c0a

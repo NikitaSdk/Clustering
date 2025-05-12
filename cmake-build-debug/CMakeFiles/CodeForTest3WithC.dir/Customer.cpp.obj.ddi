@@ -1,0 +1,13 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "CMakeFiles\\CodeForTest3WithC.dir\\Customer.cpp.obj",
+            "outputs": [
+                "CMakeFiles\\CodeForTest3WithC.dir\\Customer.cpp.obj.ddi"
+            ],
+            "requires": []
+        }
+    ]
+}

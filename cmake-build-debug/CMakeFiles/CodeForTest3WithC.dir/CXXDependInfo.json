@@ -1,0 +1,21 @@
+{
+	"bmi-installation" : null,
+	"compiler-frontend-variant" : "MSVC",
+	"compiler-id" : "MSVC",
+	"compiler-simulate-id" : "",
+	"config" : "Release",
+	"cxx-modules" : {},
+	"dir-cur-bld" : "C:/Users/user/CLionProjects/CodeForTest3WithC/cmake-build-debug",
+	"dir-cur-src" : "C:/Users/user/CLionProjects/CodeForTest3WithC",
+	"dir-top-bld" : "C:/Users/user/CLionProjects/CodeForTest3WithC/cmake-build-debug",
+	"dir-top-src" : "C:/Users/user/CLionProjects/CodeForTest3WithC",
+	"exports" : [],
+	"forward-modules-from-target-dirs" : [],
+	"include-dirs" : 
+	[
+		"C:\\Users\\user\\vcpkg\\installed\\x64-windows\\include"
+	],
+	"language" : "CXX",
+	"linked-target-dirs" : [],
+	"module-dir" : "C:/Users/user/CLionProjects/CodeForTest3WithC/cmake-build-debug/CMakeFiles/CodeForTest3WithC.dir"
+}
