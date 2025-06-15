@@ -2,10 +2,10 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "Release/CodeForTest3WithC.exe"
+			"path" : "CodeForTest3WithC.exe"
 		},
 		{
-			"path" : "Release/CodeForTest3WithC.pdb"
+			"path" : "CodeForTest3WithC.pdb"
 		}
 	],
 	"backtrace" : 1,
@@ -30,25 +30,25 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 19,
+				"line" : 16,
 				"parent" : 0
 			},
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 25,
+				"line" : 20,
 				"parent" : 0
 			},
 			{
 				"command" : 2,
 				"file" : 0,
-				"line" : 28,
+				"line" : 22,
 				"parent" : 0
 			},
 			{
 				"command" : 3,
 				"file" : 0,
-				"line" : 22,
+				"line" : 18,
 				"parent" : 0
 			}
 		]
@@ -82,12 +82,6 @@
 			[
 				0
 			]
-		}
-	],
-	"dependencies" : 
-	[
-		{
-			"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df"
 		}
 	],
 	"id" : "CodeForTest3WithC::@6890427a1f51a3e7e1df",

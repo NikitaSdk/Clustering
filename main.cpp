@@ -11,7 +11,6 @@
 #include <algorithm>
 #include <sstream>
 
-
 struct Customer {
     int operator_id;
     double call_minutes;
@@ -41,43 +40,35 @@ std::vector<Customer> readDataFromCSV(const std::string& filename) {
         std::string value;
         Customer c;
 
-
         std::getline(ss, value, ',');
         c.operator_id = std::stoi(value);
-
 
         std::getline(ss, value, ',');
         c.call_minutes = std::stod(value);
 
-
         std::getline(ss, value, ',');
         c.sms_count = std::stod(value);
-
 
         std::getline(ss, value, ',');
         c.internet_mb = std::stod(value);
 
-
         std::getline(ss, value, ',');
         c.last_activity = std::stoi(value);
 
-
         std::getline(ss, value, ',');
         c.age = std::stoi(value);
-
 
         std::getline(ss, value, ',');
         c.prepaid = std::stoi(value);
 
         customers.push_back(c);
     }
-
     return customers;
 }
 
 
 arma::mat convertToMatrix(const std::vector<Customer>& customers) {
-    arma::mat data(7, customers.size());  // 7 features for each customer
+    arma::mat data(7, customers.size());
 
     for (size_t i = 0; i < customers.size(); ++i) {
         data(0, i) = customers[i].operator_id;
@@ -92,11 +83,9 @@ arma::mat convertToMatrix(const std::vector<Customer>& customers) {
     return data;
 }
 
-
 double euclideanDistance(const arma::vec& a, const arma::vec& b) {
     return arma::norm(a - b);
 }
-
 
 double calculateSilhouetteScore(const arma::mat& data, const arma::Row<size_t>& assignments, int k) {
     double totalScore = 0.0;
@@ -116,7 +105,6 @@ double calculateSilhouetteScore(const arma::mat& data, const arma::Row<size_t>& 
             a /= clusterSize;
         }
 
-
         double b = std::numeric_limits<double>::max();
         for (int cluster = 0; cluster < k; ++cluster) {
             if (cluster != assignments(i)) {
@@ -134,7 +122,6 @@ double calculateSilhouetteScore(const arma::mat& data, const arma::Row<size_t>& 
                 }
             }
         }
-
 
         if (b > a) {
             double s = (b - a) / std::max(a, b);
@@ -158,7 +145,6 @@ double calculateIntraClusterDistance(const arma::mat& data, const arma::Row<size
                 clusterPoints.push_back(data.col(i));
             }
         }
-
 
         for (size_t i = 0; i < clusterPoints.size(); ++i) {
             for (size_t j = i + 1; j < clusterPoints.size(); ++j) {
@@ -194,93 +180,170 @@ void saveResults(const std::vector<Customer>& customers,
 
 int main() {
 
-    std::vector<Customer> customers = readDataFromCSV("C:\\Users\\user\\CLionProjects\\CodeForTest3WithC\\clients_mobile.csv");
+    std::cout << "Phase 1: Training\n";
+    std::vector<Customer> train_customers = readDataFromCSV("C:\\Users\\user\\CLionProjects\\CodeForTest3WithC\\clients_mobile_train_data.csv");
 
-    if (customers.empty()) {
-        std::cerr << "No data was read from the file. Exiting " << std::endl;
+    if (train_customers.empty()) {
+        std::cerr << "No training data was read from the file. Exiting " << std::endl;
         return 1;
     }
 
-    std::cout << "Read " << customers.size() << " customers from the file." << std::endl;
+    std::cout << "Read " << train_customers.size() << " customers from training file." << std::endl;
 
 
-    arma::mat data = convertToMatrix(customers);
 
+    // Конвертація даних у матрицю
+    arma::mat train_data = convertToMatrix(train_customers);
 
-    arma::mat normalizedData = arma::normalise(data);
+    // Розрахунок L2 норм для кожного стовпця
+    arma::vec column_norms(train_data.n_rows);
+    for (size_t i = 0; i < train_data.n_rows; ++i) {
+        column_norms(i) = arma::norm(train_data.row(i));
+    }
+    // Нормалізація даних
+    arma::mat normalized_train_data = train_data;
+    for (size_t i = 0; i < train_data.n_rows; ++i) {
+        normalized_train_data.row(i) /= column_norms(i);
+    }
 
-
+    // Налаштування параметрів K-means
     const int k = 3;
     mlpack::KMeans<> kmeans;
 
+    auto train_start = std::chrono::high_resolution_clock::now();
 
-    auto start = std::chrono::high_resolution_clock::now();
-
-
-    arma::Row<size_t> assignments;
+    arma::Row<size_t> train_assignments;
     arma::mat centroids;
-    kmeans.Cluster(normalizedData, k, assignments, centroids);
+    kmeans.Cluster(normalized_train_data, k, train_assignments, centroids);
 
-    auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> duration = end - start;
-
-
-    double silhouetteScore = calculateSilhouetteScore(normalizedData, assignments, k);
-    double intraClusterDistance = calculateIntraClusterDistance(normalizedData, assignments, k);
+    auto train_end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> train_duration = train_end - train_start;
 
 
-    std::cout << "Clustering Metrics:\n";
-    std::cout << "Execution time: " << duration.count() << " seconds\n";
-    std::cout << "Silhouette Score: " << silhouetteScore << "\n";
-    std::cout << "Average intra-cluster distance: " << intraClusterDistance << "\n\n";
+    double train_silhouette = calculateSilhouetteScore(normalized_train_data, train_assignments, k);
+    double train_intra_cluster = calculateIntraClusterDistance(normalized_train_data, train_assignments, k);
+
+    std::cout << "\nTraining Metrics:\n";
+    std::cout << "Training time: " << train_duration.count() << " seconds\n";
+    std::cout << "Silhouette Score: " << train_silhouette << "\n";
+    std::cout << "Intra-cluster Distance: " << train_intra_cluster << "\n\n";
 
 
-    std::cout << "Cluster Characteristics:\n";
-    for (int i = 0; i < k; ++i) {
-        std::cout << "\nCluster " << i << ":\n";
-        std::cout << "Centroid:\n";
-        std::cout << "Operator: " << centroids(0, i) << "\n";
-        std::cout << "Call Minutes: " << centroids(1, i) << "\n";
-        std::cout << "SMS Count: " << centroids(2, i) << "\n";
-        std::cout << "Internet (MB): " << centroids(3, i) << "\n";
-        std::cout << "Last Activity (days): " << centroids(4, i) << "\n";
-        std::cout << "Age: " << centroids(5, i) << "\n";
-        std::cout << "Prepaid: " << centroids(6, i) << "\n";
+    std::cout << "Phase 2: Testing\n";
+    std::vector<Customer> test_customers = readDataFromCSV("C:\\Users\\user\\CLionProjects\\CodeForTest3WithC\\clients_mobile_test_data.csv");
+
+    if (test_customers.empty()) {
+        std::cerr << "No test data was read from the file. Exiting " << std::endl;
+        return 1;
+    }
+
+    std::cout << "Read " << test_customers.size() << " customers from test file." << std::endl;
+
+    arma::mat test_data = convertToMatrix(test_customers);
 
 
-        int clusterSize = 0;
-        for (size_t j = 0; j < assignments.n_elem; ++j) {
-            if (assignments(j) == i) clusterSize++;
-        }
-        std::cout << "Cluster size: " << clusterSize << "\n";
-
-
-        double avgCalls = 0, avgSms = 0, avgInternet = 0, avgAge = 0;
-        int count = 0;
-        for (size_t j = 0; j < customers.size(); ++j) {
-            if (assignments(j) == i) {
-                avgCalls += customers[j].call_minutes;
-                avgSms += customers[j].sms_count;
-                avgInternet += customers[j].internet_mb;
-                avgAge += customers[j].age;
-                count++;
-            }
-        }
-        if (count > 0) {
-            avgCalls /= count;
-            avgSms /= count;
-            avgInternet /= count;
-            avgAge /= count;
-            std::cout << "Average values in cluster:\n";
-            std::cout << "Call Minutes: " << avgCalls << "\n";
-            std::cout << "SMS Count: " << avgSms << "\n";
-            std::cout << "Internet: " << avgInternet << " MB\n";
-            std::cout << "Age: " << avgAge << " years\n";
-        }
+    arma::mat normalized_test_data = test_data;
+    for (size_t i = 0; i < test_data.n_rows; ++i) {
+        normalized_test_data.row(i) /= column_norms(i);
     }
 
 
-    saveResults(customers, assignments, centroids, "clustering_results.csv");
+    auto test_start = std::chrono::high_resolution_clock::now();
+    
+    arma::Row<size_t> test_assignments(normalized_test_data.n_cols);
+    for (size_t i = 0; i < normalized_test_data.n_cols; ++i) {
+        double min_dist = std::numeric_limits<double>::max();
+        size_t closest_centroid = 0;
+
+        for (size_t j = 0; j < centroids.n_cols; ++j) {
+            double dist = arma::norm(normalized_test_data.col(i) - centroids.col(j));
+            if (dist < min_dist) {
+                min_dist = dist;
+                closest_centroid = j;
+            }
+        }
+        test_assignments(i) = closest_centroid;
+    }
+
+    auto test_end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> test_duration = test_end - test_start;
+
+
+    double test_silhouette = calculateSilhouetteScore(normalized_test_data, test_assignments, k);
+    double test_intra_cluster = calculateIntraClusterDistance(normalized_test_data, test_assignments, k);
+
+    std::cout << "\nTest Metrics:\n";
+    std::cout << "Assignment time: " << test_duration.count() << " seconds\n";
+    std::cout << "Silhouette Score: " << test_silhouette << "\n";
+    std::cout << "Intra-cluster Distance: " << test_intra_cluster << "\n";
+
+    double model_size_kb = 0.0;
+
+    model_size_kb += (centroids.n_rows * centroids.n_cols * sizeof(double));
+
+    model_size_kb += (column_norms.n_elem * sizeof(double));
+
+    model_size_kb /= 1024.0;
+    
+    std::cout << "Model size: " << std::fixed << std::setprecision(2) << model_size_kb << " KB\n\n";
+
+
+    saveResults(test_customers, test_assignments, centroids, "C:\\Users\\user\\CLionProjects\\CodeForTest3WithC\\clustering_results.csv");
+
+
+    std::cout << "Test Data Cluster Analysis:\n";
+    for (int i = 0; i < k; ++i) {
+        std::cout << "\nCluster " << i << " Summary:\n";
+        
+        int clusterSize = 0;
+        double avgCalls = 0, avgSms = 0, avgInternet = 0, avgAge = 0;
+
+        for (size_t j = 0; j < test_customers.size(); ++j) {
+            if (test_assignments(j) == i) {
+                clusterSize++;
+                avgCalls += test_customers[j].call_minutes;
+                avgSms += test_customers[j].sms_count;
+                avgInternet += test_customers[j].internet_mb;
+                avgAge += test_customers[j].age;
+            }
+        }
+
+        if (clusterSize > 0) {
+            avgCalls /= clusterSize;
+            avgSms /= clusterSize;
+            avgInternet /= clusterSize;
+            avgAge /= clusterSize;
+
+            std::cout << "Size: " << clusterSize << " customers ("
+                     << std::fixed << std::setprecision(1)
+                     << (100.0 * clusterSize / test_customers.size()) << "%)\n";
+
+            std::cout << "\nAverage Usage Patterns:\n";
+            std::cout << "- Calls: " << std::fixed << std::setprecision(1) << avgCalls << " minutes/month\n";
+            std::cout << "- SMS: " << std::fixed << std::setprecision(1) << avgSms << " messages/month\n";
+            std::cout << "- Internet: " << std::fixed << std::setprecision(1) << avgInternet << " MB/month\n";
+            std::cout << "- Average Age: " << std::fixed << std::setprecision(1) << avgAge << " years\n";
+
+            std::cout << "\nCluster Profile: ";
+
+            double internet_ratio = avgInternet / 5000.0;
+            double calls_ratio = avgCalls / 250.0;
+            double sms_ratio = avgSms / 50.0;
+
+
+            if (internet_ratio > calls_ratio && internet_ratio > sms_ratio && internet_ratio > 1.0) {
+                std::cout << "Heavy Internet Users";
+            } else if (calls_ratio > internet_ratio && calls_ratio > sms_ratio && calls_ratio > 1.0) {
+                std::cout << "Heavy Call Users";
+            } else if (sms_ratio > internet_ratio && sms_ratio > calls_ratio && sms_ratio > 1.0) {
+                std::cout << "Heavy SMS Users";
+            } else {
+                std::cout << "Moderate Users";
+            }
+            std::cout << "\n";
+        }
+        std::cout << "\n";
+    }
 
     return 0;
 }
